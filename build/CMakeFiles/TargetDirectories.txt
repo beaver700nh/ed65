@@ -1,0 +1,3 @@
+/home/alarm/Programming/ed65/build/CMakeFiles/ed65.dir
+/home/alarm/Programming/ed65/build/CMakeFiles/edit_cache.dir
+/home/alarm/Programming/ed65/build/CMakeFiles/rebuild_cache.dir

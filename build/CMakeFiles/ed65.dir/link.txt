@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wall -Wextra -rdynamic CMakeFiles/ed65.dir/src/main.cpp.o CMakeFiles/ed65.dir/src/common.cpp.o CMakeFiles/ed65.dir/src/text.cpp.o -o bin/ed65  -lcurses -lform 
