@@ -18,7 +18,10 @@ void Text::tick(int keystroke) {
   bindings_offset(keystroke);
   bindings_cursor(keystroke);
 
-  if (keystroke == '\n') {
+  if (keystroke == KEY_BACKSPACE || keystroke == '\x7f' || keystroke == '\b') {
+    backspace();
+  }
+  else if (keystroke == '\n' || keystroke == '\r') {
     add_line();
   }
   else if (isprint(keystroke)) {
@@ -57,26 +60,45 @@ void Text::bindings_cursor(int keystroke) {
 }
 
 void Text::add_letter(char letter) {
-  if (lines.size() == 0) {
-    lines.push_back("");
-  }
-
   auto &line = lines.at(cursor_y);
 
+  // If cursor is past the end, move it to the end of the line
   cursor_x = at_most<int>(cursor_x, line.size());
 
   line.insert(cursor_x++, 1, letter);
 }
 
 void Text::add_line() {
-  auto const &old_line = lines.at(cursor_y);
-  std::string lhs = old_line.substr(0, cursor_x);
-  std::string rhs = old_line.substr(cursor_x);
+  auto const &line = lines.at(cursor_y);
+
+  // If cursor is past the end, move it to the end of the line
+  cursor_x = at_most<int>(cursor_x, line.size());
+
+  std::string lhs = line.substr(0, cursor_x);
+  std::string rhs = line.substr(cursor_x);
 
   lines.at(cursor_y++) = lhs;
   lines.insert(lines.cbegin() + cursor_y, rhs);
 
   cursor_x = 0;
+}
+
+void Text::backspace() {
+  auto &line = lines.at(cursor_y);
+
+  if (cursor_x == 0) {
+    if (cursor_y == 0) {
+      return; // can't delete past the beginning
+    }
+
+    lines.at(cursor_y - 1).append(line);
+    lines.erase(lines.begin() + cursor_y--);
+
+    cursor_x = lines.at(cursor_y).size();
+  }
+  else {
+    line.erase(--cursor_x, 1);
+  }
 }
 
 void Text::draw() {
@@ -135,5 +157,9 @@ void Text::draw_cursor() {
 
   wmove(win, row, at_most<int>(col, lines.at(cursor_y).size()));
   curs_set(true);
+}
+
+void Text::refresh() {
+  wrefresh(win);
 }
 

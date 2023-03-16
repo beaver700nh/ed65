@@ -23,10 +23,13 @@ public:
 
   void add_letter(char letter);
   void add_line();
+  void backspace();
 
   void draw();
   void draw_line(unsigned int line_no, unsigned int row, unsigned int col);
   void draw_cursor();
+
+  void refresh();
 
 private:
   WINDOW *frame;
@@ -38,7 +41,7 @@ private:
   unsigned int cursor_x = 0;
   unsigned int cursor_y = 0;
 
-  std::vector<std::string> lines;
+  std::vector<std::string> lines {""};
   std::vector<std::vector<Highlight>> highlights;
 };
 

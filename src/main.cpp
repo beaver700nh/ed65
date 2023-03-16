@@ -9,7 +9,9 @@
 #include "main.hpp"
 
 int main() {
-  signal(SIGINT, cleanup);
+  signal(SIGINT,  cleanup);
+  signal(SIGHUP,  cleanup);
+  signal(SIGTERM, cleanup);
 
   int rows, cols;
   startup(&rows, &cols);
@@ -25,6 +27,9 @@ int main() {
   box(info, 0, 0);
 
   refresh();
+
+  text.draw();
+  text.refresh();
 
   while (true) {
     int keystroke = getch();
