@@ -24,6 +24,18 @@ void Text::tick(int keystroke) {
   else if (keystroke == '\n' || keystroke == '\r') {
     add_line();
   }
+  else if (keystroke == KEY_HOME) {
+    cursor_home();
+  }
+  else if (keystroke == KEY_END) {
+    cursor_end();
+  }
+  else if (keystroke == KEY_PPAGE) {
+    cursor_page_up();
+  }
+  else if (keystroke == KEY_NPAGE) {
+    cursor_page_down();
+  }
   else if (isprint(keystroke)) {
     add_letter(keystroke);
   }
@@ -59,11 +71,38 @@ void Text::bindings_cursor(int keystroke) {
   }
 }
 
+void Text::cursor_home() {
+  cursor_x = 0;
+}
+
+void Text::cursor_end() {
+  cursor_x = lines.at(cursor_y).size();
+}
+
+void Text::cursor_page_up() {
+  if (cursor_y == 0) {
+    cursor_x = 0;
+  }
+
+  cursor_y -= at_most<unsigned int>(getmaxy(win) - 1, cursor_y);
+}
+
+void Text::cursor_page_down() {
+  auto max = lines.size() - 1;
+
+  if (cursor_y == max) {
+    cursor_end();
+  }
+
+  cursor_y += at_most<unsigned int>(getmaxy(win) - 1, lines.size() - 1 - cursor_y);
+}
+
 void Text::add_letter(char letter) {
   auto &line = lines.at(cursor_y);
 
-  // If cursor is past the end, move it to the end of the line
-  cursor_x = at_most<int>(cursor_x, line.size());
+  if (cursor_x > line.length()) {
+    cursor_end();
+  }
 
   line.insert(cursor_x++, 1, letter);
 }
@@ -71,8 +110,9 @@ void Text::add_letter(char letter) {
 void Text::add_line() {
   auto const &line = lines.at(cursor_y);
 
-  // If cursor is past the end, move it to the end of the line
-  cursor_x = at_most<int>(cursor_x, line.size());
+  if (cursor_x > line.length()) {
+    cursor_end();
+  }
 
   std::string lhs = line.substr(0, cursor_x);
   std::string rhs = line.substr(cursor_x);

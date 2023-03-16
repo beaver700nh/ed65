@@ -21,6 +21,11 @@ public:
   void bindings_offset(int keystroke);
   void bindings_cursor(int keystroke);
 
+  void cursor_home();
+  void cursor_end();
+  void cursor_page_up();
+  void cursor_page_down();
+
   void add_letter(char letter);
   void add_line();
   void backspace();
