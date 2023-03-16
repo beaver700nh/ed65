@@ -15,6 +15,18 @@ Text::Text(int rows, int cols, int row, int col) {
 }
 
 void Text::tick(int keystroke) {
+  bindings_offset(keystroke);
+  bindings_cursor(keystroke);
+
+  if (keystroke == '\n') {
+    add_line();
+  }
+  else if (isprint(keystroke)) {
+    add_letter(keystroke);
+  }
+}
+
+void Text::bindings_offset(int keystroke) {
   if (keystroke == KEY_F(1)) {
     --offset_y;
   }
@@ -27,29 +39,56 @@ void Text::tick(int keystroke) {
   if (keystroke == KEY_F(4)) {
     ++offset_x;
   }
+}
 
-  if (isprint(keystroke)) {
-    add_letter(keystroke);
+void Text::bindings_cursor(int keystroke) {
+  if (keystroke == KEY_UP && cursor_y > 0) {
+    --cursor_y;
   }
+  if (keystroke == KEY_DOWN && cursor_y + 1 < lines.size()) {
+    ++cursor_y;
+  }
+  if (keystroke == KEY_LEFT && cursor_x > 0) {
+    --cursor_x;
+  }
+  if (keystroke == KEY_RIGHT && cursor_x < lines.at(cursor_y).size()) {
+    ++cursor_x;
+  }
+}
+
+void Text::add_letter(char letter) {
+  if (lines.size() == 0) {
+    lines.push_back("");
+  }
+
+  lines.at(cursor_y).insert(cursor_x++, 1, letter);
+}
+
+void Text::add_line() {
+  auto const &old_line = lines.at(cursor_y);
+  std::string lhs = old_line.substr(0, cursor_x);
+  std::string rhs = old_line.substr(cursor_x);
+
+  lines.at(cursor_y++) = lhs;
+  lines.insert(lines.cbegin() + cursor_y, rhs);
+
+  cursor_x = 0;
 }
 
 void Text::draw() {
   werase(win);
 
   unsigned int const line_last = lines.size() - 1;
-  unsigned int const line_first = constrain<int>(offset_y, 0, line_last);
+  unsigned int const line_first = at_least<int>(-offset_y, 0);
 
   for (unsigned int line_no = line_first; line_no <= line_last; ++line_no) {
-    int const row = line_no + offset_y;
-    int const col = at_least<int>(offset_x, 0);
+    unsigned int const row = line_no + offset_y;
+    unsigned int const col = at_least<int>(offset_x, 0);
 
-    if (row < 0) {
-      continue; // skip if above top of screen
-    }
-    if (row >= getmaxy(win)) {
+    if (row >= static_cast<unsigned int>(getmaxy(win))) {
       break; // quit if bottom of screen is reached
     }
-    if (col >= getmaxx(win)) {
+    if (col >= static_cast<unsigned int>(getmaxx(win))) {
       continue; // skip if to right of screen
     }
 
@@ -61,7 +100,7 @@ void Text::draw() {
   wnoutrefresh(win);
 }
 
-void Text::draw_line(unsigned int line_no, int row, int col) {
+void Text::draw_line(unsigned int line_no, unsigned int row, unsigned int col) {
   auto const &line = lines.at(line_no);
 
   unsigned int const char_first = at_least<int>(-offset_x, 0);
@@ -92,13 +131,5 @@ void Text::draw_cursor() {
 
   wmove(win, row, col);
   curs_set(true);
-}
-
-void Text::add_letter(char letter) {
-  if (lines.size() == 0) {
-    lines.push_back("");
-  }
-
-  lines.at(cursor_y).insert(cursor_x++, 1, letter);
 }
 
