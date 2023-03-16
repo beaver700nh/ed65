@@ -1,2 +1,5 @@
+.cache
+.replit
 .vscode
 build
+replit.nix

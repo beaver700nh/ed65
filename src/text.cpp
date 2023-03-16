@@ -61,7 +61,11 @@ void Text::add_letter(char letter) {
     lines.push_back("");
   }
 
-  lines.at(cursor_y).insert(cursor_x++, 1, letter);
+  auto &line = lines.at(cursor_y);
+
+  cursor_x = at_most<int>(cursor_x, line.size());
+
+  line.insert(cursor_x++, 1, letter);
 }
 
 void Text::add_line() {
@@ -129,7 +133,7 @@ void Text::draw_cursor() {
     return;
   }
 
-  wmove(win, row, col);
+  wmove(win, row, at_most<int>(col, lines.at(cursor_y).size()));
   curs_set(true);
 }
 
