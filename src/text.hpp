@@ -15,6 +15,7 @@ struct Highlight {
 class Text {
 public:
   Text(int rows, int cols, int row, int col);
+  ~Text();
 
   void tick(int keystroke);
 
@@ -30,6 +31,8 @@ public:
   void add_line();
   void backspace();
 
+  void update_bar();
+
   void draw();
   void draw_line(unsigned int line_no, unsigned int row, unsigned int col);
   void draw_cursor();
@@ -39,6 +42,7 @@ public:
 private:
   WINDOW *frame;
   WINDOW *win;
+  WINDOW *bar;
 
   int offset_x = 0;
   int offset_y = 0;
@@ -48,6 +52,8 @@ private:
 
   std::vector<std::string> lines {""};
   std::vector<std::vector<Highlight>> highlights;
+
+  char *bar_text;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
 
 #include <curses.h>
@@ -11,7 +12,17 @@ Text::Text(int rows, int cols, int row, int col) {
   frame = subwin(stdscr, rows, cols, row, col);
   box(frame, 0, 0);
 
-  win = subwin(frame, rows - 2, cols - 2, 1, 1);
+  win = subwin(frame, rows - 3, cols - 2, 1, 1);
+
+  bar = subwin(frame, 1, cols - 2, rows - 2, 1);
+  wattrset(bar, A_REVERSE);
+
+  bar_text = (char *) malloc((cols - 2 + 1) * (sizeof (char))); // +1 for terminating null
+  update_bar();
+}
+
+Text::~Text() {
+  free((void *) bar_text);
 }
 
 void Text::tick(int keystroke) {
@@ -39,6 +50,8 @@ void Text::tick(int keystroke) {
   else if (isprint(keystroke)) {
     add_letter(keystroke);
   }
+
+  update_bar();
 }
 
 void Text::bindings_offset(int keystroke) {
@@ -147,7 +160,16 @@ void Text::backspace() {
   }
 }
 
+void Text::update_bar() {
+  snprintf(bar_text, getmaxx(bar) + 1, "%u~%u %d~%d", cursor_y, cursor_x, offset_y, offset_x);
+}
+
 void Text::draw() {
+  wborder(bar, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); // easy way to fill with spaces
+  mvwaddstr(bar, 0, 0, bar_text);
+
+  wnoutrefresh(bar);
+
   werase(win);
 
   unsigned int const line_last = lines.size() - 1;
