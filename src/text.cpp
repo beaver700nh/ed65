@@ -66,8 +66,14 @@ void Text::bindings_cursor(int keystroke) {
   if (keystroke == KEY_LEFT && cursor_x > 0) {
     --cursor_x;
   }
-  if (keystroke == KEY_RIGHT && cursor_x < lines.at(cursor_y).size()) {
-    ++cursor_x;
+  if (keystroke == KEY_RIGHT) {
+    if (cursor_x < lines.at(cursor_y).size()) {
+      ++cursor_x;
+    }
+    else {
+      // Right arrow snaps cursor to end if dangling off
+      cursor_end();
+    }
   }
 }
 
@@ -195,7 +201,9 @@ void Text::draw_cursor() {
     return;
   }
 
-  wmove(win, row, at_most<int>(col, lines.at(cursor_y).size()));
+  int const maxcol = lines.at(cursor_y).size() + offset_x;
+
+  wmove(win, row, at_most<int>(col, maxcol));
   curs_set(true);
 }
 
