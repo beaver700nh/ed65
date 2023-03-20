@@ -32,12 +32,14 @@ void Text::tick(int keystroke) {
   else {
     tick_edit(keystroke);
   }
+
+  update_bar();
 }
 
 void Text::tick_edit(int keystroke) {
   if (keystroke == KEY_F(7)) {
     in_command = true;
-    update_bar_command();
+    command = "";
     return;
   }
 
@@ -65,14 +67,11 @@ void Text::tick_edit(int keystroke) {
   else if (isprint(keystroke)) {
     add_letter(keystroke);
   }
-
-  update_bar_edit();
 }
 
 void Text::tick_command(int keystroke) {
   if (keystroke == KEY_F(7)) {
     in_command = false;
-    update_bar_edit();
     return;
   }
 
@@ -82,8 +81,6 @@ void Text::tick_command(int keystroke) {
   else if (isprint(keystroke)) {
     add_letter_command(keystroke);
   }
-
-  update_bar_command();
 }
 
 void Text::bindings_offset(int keystroke) {
@@ -202,32 +199,36 @@ void Text::backspace_command() {
   }
 }
 
+void Text::update_bar() {
+  if (in_command) {
+    update_bar_command();
+  }
+  else {
+    update_bar_edit();
+  }
+}
+
 void Text::update_bar_edit() {
   snprintf(bar_text, getmaxx(bar) + 1, "%u~%u %d~%d", cursor_y, cursor_x, offset_y, offset_x);
 }
 
 void Text::update_bar_command() {
-  // 2 is for command indicator and cursor
+  // -2 for command indicator and cursor
   unsigned int space = at_least<int>(getmaxx(bar) - 2, 0);
 
-  if (command.size() < space) {
+  if (command.size() <= space) {
     snprintf(bar_text, getmaxx(bar) + 1, ":%s", command.c_str());
   }
   else {
-    // 1 for extra column taken by cutoff marker
-    unsigned int index = at_least<int>(command.size() - space - 1, 0);
+    // +1 for extra column taken by cutoff marker
+    unsigned int index = at_least<int>(command.size() - space + 1, 0);
     std::string shortened = command.substr(index);
   
-    snprintf(bar_text, getmaxx(bar) + 1, "::%s", shortened.c_str());
+    snprintf(bar_text, getmaxx(bar) + 1, ":<%s", shortened.c_str());
   }
 }
 
 void Text::draw() {
-  wborder(bar, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); // easy way to fill with spaces
-  mvwaddstr(bar, 0, 0, bar_text);
-
-  wnoutrefresh(bar);
-
   werase(win);
 
   unsigned int const line_last = lines.size() - 1;
@@ -247,9 +248,14 @@ void Text::draw() {
     draw_line(line_no, row, col);
   }
 
-  draw_cursor();
-
   wnoutrefresh(win);
+
+  wborder(bar, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '); // easy way to fill with spaces
+  mvwaddstr(bar, 0, 0, bar_text);
+
+  wnoutrefresh(bar);
+
+  draw_cursor();
 }
 
 void Text::draw_line(unsigned int line_no, unsigned int row, unsigned int col) {
@@ -267,6 +273,17 @@ void Text::draw_line(unsigned int line_no, unsigned int row, unsigned int col) {
 }
 
 void Text::draw_cursor() {
+  if (in_command) {
+    draw_cursor_command();
+    wnoutrefresh(bar);
+  }
+  else {
+    draw_cursor_edit();
+    wnoutrefresh(win);
+  }
+}
+
+void Text::draw_cursor_edit() {
   int const row = cursor_y + offset_y;
 
   if (0 > row || row >= getmaxy(win)) {
@@ -284,6 +301,11 @@ void Text::draw_cursor() {
   int const maxcol = lines.at(cursor_y).size() + offset_x;
 
   wmove(win, row, at_most<int>(col, maxcol));
+  curs_set(true);
+}
+
+void Text::draw_cursor_command() {
+  wmove(bar, 0, at_most<int>(command.size() + 1, getmaxx(bar))); // +1 for cursor
   curs_set(true);
 }
 

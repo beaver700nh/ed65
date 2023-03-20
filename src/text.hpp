@@ -35,12 +35,15 @@ public:
   void backspace();
   void backspace_command();
 
+  void update_bar();
   void update_bar_edit();
   void update_bar_command();
 
   void draw();
   void draw_line(unsigned int line_no, unsigned int row, unsigned int col);
   void draw_cursor();
+  void draw_cursor_edit();
+  void draw_cursor_command();
 
   void refresh();
 
@@ -50,7 +53,7 @@ private:
   WINDOW *bar;
 
   bool in_command = false;
-  std::string command {""};
+  std::string command;
 
   int offset_x = 0;
   int offset_y = 0;
@@ -65,3 +68,4 @@ private:
 };
 
 #endif
+
