@@ -16,6 +16,7 @@ add_executable(
   ${PROJECT_NAME}
   src/main.cpp
   src/common.cpp
+  src/bar.cpp
   src/text.cpp
 )
 

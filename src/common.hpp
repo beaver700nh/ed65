@@ -1,6 +1,11 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
+enum class WidgetFocus {
+  TEXT_EDITOR,
+  COMMAND_BAR,
+};
+
 template<typename T>
 T constrain(T value, T min, T max) {
   if (value < min) {
