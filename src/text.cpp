@@ -18,7 +18,7 @@ Text::Text(int rows, int cols, int row, int col) {
   wattrset(bar, A_REVERSE);
 
   bar_text = (char *) malloc((cols - 2 + 1) * (sizeof (char))); // +1 for terminating null
-  update_bar();
+  update_bar_edit();
 }
 
 Text::~Text() {
@@ -26,6 +26,21 @@ Text::~Text() {
 }
 
 void Text::tick(int keystroke) {
+  if (in_command) {
+    tick_command(keystroke);
+  }
+  else {
+    tick_edit(keystroke);
+  }
+}
+
+void Text::tick_edit(int keystroke) {
+  if (keystroke == KEY_F(7)) {
+    in_command = true;
+    update_bar_command();
+    return;
+  }
+
   bindings_offset(keystroke);
   bindings_cursor(keystroke);
 
@@ -51,7 +66,24 @@ void Text::tick(int keystroke) {
     add_letter(keystroke);
   }
 
-  update_bar();
+  update_bar_edit();
+}
+
+void Text::tick_command(int keystroke) {
+  if (keystroke == KEY_F(7)) {
+    in_command = false;
+    update_bar_edit();
+    return;
+  }
+
+  if (keystroke == KEY_BACKSPACE || keystroke == '\x7f' || keystroke == '\b') {
+    backspace_command();
+  }
+  else if (isprint(keystroke)) {
+    add_letter_command(keystroke);
+  }
+
+  update_bar_command();
 }
 
 void Text::bindings_offset(int keystroke) {
@@ -126,6 +158,10 @@ void Text::add_letter(char letter) {
   line.insert(cursor_x++, 1, letter);
 }
 
+void Text::add_letter_command(char letter) {
+  command.push_back(letter);
+}
+
 void Text::add_line() {
   auto const &line = lines.at(cursor_y);
 
@@ -160,8 +196,30 @@ void Text::backspace() {
   }
 }
 
-void Text::update_bar() {
+void Text::backspace_command() {
+  if (command.size() > 0) {
+    command.pop_back();
+  }
+}
+
+void Text::update_bar_edit() {
   snprintf(bar_text, getmaxx(bar) + 1, "%u~%u %d~%d", cursor_y, cursor_x, offset_y, offset_x);
+}
+
+void Text::update_bar_command() {
+  // 2 is for command indicator and cursor
+  unsigned int space = at_least<int>(getmaxx(bar) - 2, 0);
+
+  if (command.size() < space) {
+    snprintf(bar_text, getmaxx(bar) + 1, ":%s", command.c_str());
+  }
+  else {
+    // 1 for extra column taken by cutoff marker
+    unsigned int index = at_least<int>(command.size() - space - 1, 0);
+    std::string shortened = command.substr(index);
+  
+    snprintf(bar_text, getmaxx(bar) + 1, "::%s", shortened.c_str());
+  }
 }
 
 void Text::draw() {

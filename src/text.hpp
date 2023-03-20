@@ -18,6 +18,8 @@ public:
   ~Text();
 
   void tick(int keystroke);
+  void tick_edit(int keystroke);
+  void tick_command(int keystroke);
 
   void bindings_offset(int keystroke);
   void bindings_cursor(int keystroke);
@@ -28,10 +30,13 @@ public:
   void cursor_page_down();
 
   void add_letter(char letter);
+  void add_letter_command(char letter);
   void add_line();
   void backspace();
+  void backspace_command();
 
-  void update_bar();
+  void update_bar_edit();
+  void update_bar_command();
 
   void draw();
   void draw_line(unsigned int line_no, unsigned int row, unsigned int col);
@@ -43,6 +48,9 @@ private:
   WINDOW *frame;
   WINDOW *win;
   WINDOW *bar;
+
+  bool in_command = false;
+  std::string command {""};
 
   int offset_x = 0;
   int offset_y = 0;
