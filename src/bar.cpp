@@ -4,6 +4,7 @@
 
 #include "common.hpp"
 
+#include "command.hpp"
 #include "text.hpp"
 
 #include "bar.hpp"
@@ -26,12 +27,16 @@ bool Bar::tick(int keystroke) {
   }
 
   if (keystroke == KEY_F(7)) {
-    focus = WidgetFocus::TEXT_EDITOR;
+    escape();
     return false;
   }
 
   if (keystroke == KEY_BACKSPACE || keystroke == '\x7f' || keystroke == '\b') {
     backspace();
+  }
+  else if (keystroke == KEY_ENTER || keystroke == '\n' || keystroke == '\r') {
+    Command::run(command, text);
+    escape();
   }
   else if (isprint(keystroke)) {
     add_letter(keystroke);
@@ -48,6 +53,11 @@ void Bar::backspace() {
   if (command.size() > 0) {
     command.pop_back();
   }
+}
+
+void Bar::escape() {
+  focus = WidgetFocus::TEXT_EDITOR;
+  command.clear();
 }
 
 void Bar::update() {
@@ -77,7 +87,7 @@ void Bar::update_command() {
     // +1 for extra column taken by cutoff marker
     unsigned int index = at_least<int>(command.size() - space + 1, 0);
     std::string shortened = command.substr(index);
-  
+
     snprintf(command_text, getmaxx(win) + 1, ":<%s", shortened.c_str());
   }
 }
@@ -102,3 +112,4 @@ void Bar::draw_cursor() {
 void Bar::refresh() {
   wnoutrefresh(win);
 }
+

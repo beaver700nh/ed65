@@ -17,6 +17,7 @@ add_executable(
   src/main.cpp
   src/common.cpp
   src/bar.cpp
+  src/command.cpp
   src/text.cpp
 )
 

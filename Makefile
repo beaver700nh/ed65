@@ -1,4 +1,4 @@
-.PHONY: all clean build run
+.PHONY: all clean build run finddws
 .SILENT: all
 
 ACTIONS := a - Quit\nb - Run
@@ -20,4 +20,7 @@ build:
 
 run:
 	./build/bin/ed65
+
+finddws:
+	grep -En '\s+$$' src/*
 

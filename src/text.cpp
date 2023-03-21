@@ -31,7 +31,7 @@ bool Text::tick(int keystroke) {
   if (keystroke == KEY_BACKSPACE || keystroke == '\x7f' || keystroke == '\b') {
     backspace();
   }
-  else if (keystroke == '\n' || keystroke == '\r') {
+  else if (keystroke == KEY_ENTER || keystroke == '\n' || keystroke == '\r') {
     add_line();
   }
   else if (keystroke == KEY_HOME) {
@@ -143,6 +143,10 @@ void Text::add_line() {
 
 void Text::backspace() {
   auto &line = lines.at(cursor_y);
+
+  if (cursor_x > line.length()) {
+    cursor_end();
+  }
 
   if (cursor_x == 0) {
     if (cursor_y == 0) {

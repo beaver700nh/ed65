@@ -16,6 +16,7 @@ struct Highlight {
 
 class Text {
   friend class Bar;
+  friend class Command;
 
 public:
   Text(int rows, int cols, int row, int col, WidgetFocus &focus);

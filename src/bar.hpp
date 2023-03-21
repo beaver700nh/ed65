@@ -19,6 +19,8 @@ public:
   void add_letter(char letter);
   void backspace();
 
+  void escape();
+
   void update();
   void update_edit();
   void update_command();
@@ -40,3 +42,4 @@ private:
 };
 
 #endif
+
