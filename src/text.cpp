@@ -1,6 +1,6 @@
 #include <curses.h>
 
-#include "common.cpp"
+#include "common.hpp"
 
 #include "text.hpp"
 

@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 #include <curses.h>
 
@@ -9,6 +10,12 @@
 #include "command.hpp"
 
 void Command::run(std::string command, Text &text) {
-  text.lines.push_back(command);
+  std::vector<std::string> arguments = wordify(command);
+
+  command_warp(text, arguments);
+}
+
+void Command::CALLBACK(warp) {
+  text.lines.insert(text.lines.end(), args.cbegin(), args.cend());
 }
 

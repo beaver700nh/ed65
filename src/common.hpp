@@ -1,6 +1,9 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 
+#include <string>
+#include <vector>
+
 enum class WidgetFocus {
   TEXT_EDITOR,
   COMMAND_BAR,
@@ -38,5 +41,7 @@ T at_most(T value, T max) {
     return value;
   }
 }
+
+std::vector<std::string> wordify(std::string str);
 
 #endif
