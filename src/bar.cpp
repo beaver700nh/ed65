@@ -26,8 +26,6 @@ Bar::~Bar() {
 }
 
 bool Bar::tick(int keystroke) {
-  *status_text = '\0'; // clear status on key press
-
   if (focus != WidgetFocus::COMMAND_BAR) {
     return true;
   }
@@ -66,13 +64,17 @@ void Bar::escape() {
   command.clear();
 }
 
-void Bar::set_status(char const *format, ...) {
+void Bar::status_set(char const *format, ...) {
   va_list args;
   va_start(args, format);
 
   vsnprintf(status_text, getmaxx(win) + 1, format, args);
 
   va_end(args);
+}
+
+void Bar::status_clear() {
+  *status_text = '\0';
 }
 
 void Bar::update() {
@@ -85,10 +87,18 @@ void Bar::update() {
 }
 
 void Bar::update_edit() {
-  snprintf(
-    command_text, getmaxx(win) + 1, "%u~%u %d~%d %s",
-    text.cursor_y, text.cursor_x, text.offset_y, text.offset_x, status_text
-  );
+  int const width = getmaxx(win);
+
+  if (
+    snprintf(
+      command_text, width + 1, "%u~%u %d~%d %s",
+      text.cursor_y, text.cursor_x,
+      text.offset_y, text.offset_x,
+      status_text
+    ) > width
+  ) {
+    command_text[width - 1] = '~';
+  }
 }
 
 void Bar::update_command() {

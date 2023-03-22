@@ -54,6 +54,8 @@ int main() {
       break;
     }
 
+    bar.status_clear();
+
     text.tick(keystroke) &&
     bar.tick(keystroke);
   }

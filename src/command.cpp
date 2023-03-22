@@ -23,14 +23,14 @@ void Command::run(std::string command, Text &text, Bar &bar) {
   auto callback = callbacks.find(name);
 
   if (callback == callbacks.end()) {
-    bar.set_status("Unrecognized command: '%s'", name.c_str());
+    bar.status_set("Unrecognized command: '%s'", name.c_str());
     return;
   }
 
   unsigned int signature = callback->second.arguments;
 
   if (arguments.size() <= signature) {
-    bar.set_status("Command '%s' requires >= %d arguments", name.c_str(), signature);
+    bar.status_set("Command '%s' requires >= %d arguments", name.c_str(), signature);
     return;
   }
 
@@ -38,7 +38,7 @@ void Command::run(std::string command, Text &text, Bar &bar) {
     (*callback->second.function)(text, bar, arguments);
   }
   catch (std::exception const &e) {
-    bar.set_status("Command '%s' had error: %s", name.c_str(), e.what());
+    bar.status_set("Command '%s' had error: %s", name.c_str(), e.what());
   }
 }
 

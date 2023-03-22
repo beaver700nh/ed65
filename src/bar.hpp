@@ -22,7 +22,8 @@ public:
 
   void escape();
 
-  void set_status(char const *format, ...);
+  void status_set(char const *format, ...);
+  void status_clear();
 
   void update();
   void update_edit();
