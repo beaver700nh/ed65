@@ -61,3 +61,22 @@ void Command::CALLBACK_DEF(warp) {
   text.offset_x = at_most<int>(offset_x, 0); // text should never be right-shifted past 0
 }
 
+void Command::CALLBACK_DEF(save) {
+  (void) bar;
+
+  void _save_file(std::string filename, Text &text);
+
+  if (args.size() > 1) {
+    _save_file(args.at(1), text);
+  }
+  else if (text.filename != "") {
+    _save_file(text.filename, text);
+  }
+  else {
+    throw std::runtime_error("No filename is given or cached");
+  }
+}
+
+void _save_file(std::string filename, Text &text) {
+  //
+}

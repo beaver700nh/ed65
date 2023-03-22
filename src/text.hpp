@@ -56,6 +56,8 @@ private:
 
   std::vector<std::string> lines {""};
   std::vector<std::vector<Highlight>> highlights;
+
+  std::string filename {""};
 };
 
 #endif
