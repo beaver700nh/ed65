@@ -196,6 +196,20 @@ void Text::draw_line(unsigned int line_no, unsigned int row, unsigned int col) {
   unsigned int const segment = at_most<int>(getmaxx(win) - col, line.size() - char_first);
 
   mvwprintw(win, row, col, "%s", line.substr(char_first, segment).c_str());
+
+  draw_highlights(line_no, row, col);
+}
+
+void Text::draw_highlights(unsigned int line_no, unsigned int row, unsigned int col) {
+  auto line = highlights.find(line_no);
+
+  if (line == highlights.end()) {
+    return; // line has no highlights
+  }
+
+  for (auto const &hl : line->second) {
+    mvwchgat(win, row, col + hl.start, hl.num, A_NORMAL, hl.color, nullptr);
+  }
 }
 
 void Text::draw_cursor() {

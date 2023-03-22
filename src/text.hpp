@@ -2,6 +2,7 @@
 #define TEXT_HPP
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <curses.h>
@@ -9,9 +10,9 @@
 #include "common.hpp"
 
 struct Highlight {
-  int color;
   int start;
-  int end;
+  int num;
+  int color;
 };
 
 class Text {
@@ -38,6 +39,7 @@ public:
 
   void draw();
   void draw_line(unsigned int line_no, unsigned int row, unsigned int col);
+  void draw_highlights(unsigned int line_no, unsigned int row, unsigned int col);
   void draw_cursor();
 
   void refresh();
@@ -55,7 +57,12 @@ private:
   unsigned int cursor_y = 0;
 
   std::vector<std::string> lines {""};
-  std::vector<std::vector<Highlight>> highlights;
+
+  // line number : Highlight[]
+  std::unordered_map<unsigned int, std::vector<Highlight>> highlights {
+    {0, {{0, 3, 1}, {5, 1, 2}}},
+    {2, {{1, 9, 1}, {2, 3, 2}}},
+  };
 
   std::string filename {""};
 };

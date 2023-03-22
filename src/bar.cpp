@@ -137,4 +137,3 @@ void Bar::draw_cursor() {
 void Bar::refresh() {
   wnoutrefresh(win);
 }
-
