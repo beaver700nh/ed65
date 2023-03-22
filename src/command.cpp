@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -64,19 +65,19 @@ void Command::CALLBACK_DEF(warp) {
 void Command::CALLBACK_DEF(save) {
   (void) bar;
 
-  void _save_file(std::string filename, Text &text);
+  void _save_file(std::string filename, std::vector<std::string> lines);
 
   if (args.size() > 1) {
-    _save_file(args.at(1), text);
+    text.filename = args.at(1);
   }
-  else if (text.filename != "") {
-    _save_file(text.filename, text);
-  }
-  else {
+
+  if (text.filename == "") {
     throw std::runtime_error("No filename is given or cached");
   }
+
+  _save_file(text.filename, text.lines);
 }
 
-void _save_file(std::string filename, Text &text) {
-  //
+void _save_file(std::string filename, std::vector<std::string> lines) {
+  (std::ofstream {filename.c_str()} << join(lines, "\n")).close();
 }

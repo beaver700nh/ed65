@@ -43,5 +43,6 @@ T at_most(T value, T max) {
 }
 
 std::vector<std::string> wordify(std::string str);
+std::string join(std::vector<std::string> list, std::string delimiter);
 
 #endif
