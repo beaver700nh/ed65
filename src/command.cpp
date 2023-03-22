@@ -88,15 +88,21 @@ void Command::CALLBACK_DEF(load) {
 
   void _load_file(std::string filename, std::vector<std::string> &lines);
 
-  text.lines.clear();
   _load_file(args.at(1), text.lines);
+  text.cursor_x = text.cursor_y = text.offset_x = text.offset_y = 0;
 }
 
 void _load_file(std::string filename, std::vector<std::string> &lines) {
+  lines.clear();
+
   std::ifstream file {filename.c_str()};
   std::string line;
 
   while (std::getline(file, line)) {
     lines.push_back(line);
+  }
+
+  if (lines.size() == 0) {
+    lines.push_back("");
   }
 }
