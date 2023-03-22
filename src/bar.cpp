@@ -1,3 +1,4 @@
+#include <cstdarg>
 #include <string>
 
 #include <curses.h>
@@ -13,15 +14,20 @@ Bar::Bar(int rows, int cols, int row, int col, WidgetFocus &focus, Text &text) :
   win = subwin(text.frame, rows, cols, row, col);
   wattrset(win, A_REVERSE);
 
-  command_text = (char *) malloc((cols - 2 + 1) * (sizeof (char))); // +1 for terminating null
+  // -2 for command indicator and cursor; +1 for terminating null
+  command_text = (char *) malloc((cols - 2 + 1) * (sizeof (char)));
+  status_text = (char *) malloc((cols - 2 + 1) * (sizeof (char)));
   update_edit();
 }
 
 Bar::~Bar() {
   free((void *) command_text);
+  free((void *) status_text);
 }
 
 bool Bar::tick(int keystroke) {
+  *status_text = '\0'; // clear status on key press
+
   if (focus != WidgetFocus::COMMAND_BAR) {
     return true;
   }
@@ -35,7 +41,7 @@ bool Bar::tick(int keystroke) {
     backspace();
   }
   else if (keystroke == KEY_ENTER || keystroke == '\n' || keystroke == '\r') {
-    Command::run(command, text);
+    Command::run(command, text, *this);
     escape();
   }
   else if (isprint(keystroke)) {
@@ -60,6 +66,15 @@ void Bar::escape() {
   command.clear();
 }
 
+void Bar::set_status(char const *format, ...) {
+  va_list args;
+  va_start(args, format);
+
+  vsnprintf(status_text, getmaxx(win) + 1, format, args);
+
+  va_end(args);
+}
+
 void Bar::update() {
   if (focus == WidgetFocus::TEXT_EDITOR) {
     update_edit();
@@ -71,8 +86,8 @@ void Bar::update() {
 
 void Bar::update_edit() {
   snprintf(
-    command_text, getmaxx(win) + 1, "%u~%u %d~%d",
-    text.cursor_y, text.cursor_x, text.offset_y, text.offset_x
+    command_text, getmaxx(win) + 1, "%u~%u %d~%d %s",
+    text.cursor_y, text.cursor_x, text.offset_y, text.offset_x, status_text
   );
 }
 

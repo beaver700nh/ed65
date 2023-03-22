@@ -1,6 +1,7 @@
 #ifndef BAR_HPP
 #define BAR_HPP
 
+#include <cstdarg>
 #include <string>
 
 #include <curses.h>
@@ -21,6 +22,8 @@ public:
 
   void escape();
 
+  void set_status(char const *format, ...);
+
   void update();
   void update_edit();
   void update_command();
@@ -39,6 +42,7 @@ private:
 
   std::string command;
   char *command_text;
+  char *status_text;
 };
 
 #endif

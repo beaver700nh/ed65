@@ -9,22 +9,26 @@
 
 #include "common.hpp"
 
+#include "bar.hpp"
 #include "text.hpp"
 
-#define CALLBACK_DEF(name)      command_##name(Text &text, std::vector<std::string> args)
-#define CALLBACK_TYPE           void (*)(Text &, std::vector<std::string>)
-#define CALLBACK_REGISTER(name) {#name, command_##name}
+#define CALLBACK_DEF(name) command_##name(Text &text, Bar &bar, std::vector<std::string> args)
+#define CALLBACK_REGISTER(name, args) {#name, {command_##name, args}}
 
 class Command {
 public:
   Command() = delete;
 
-  static void run(std::string command, Text &text);
+  static void run(std::string command, Text &text, Bar &bar);
 
   static void CALLBACK_DEF(warp);
 
-  static inline std::unordered_map<std::string, CALLBACK_TYPE> const callbacks {
-    CALLBACK_REGISTER(warp),
+private:
+  using CallbackType = void (*)(Text &, Bar &, std::vector<std::string>);
+  using CallbackInfo = struct { CallbackType function; unsigned int arguments; };
+
+  static inline std::unordered_map<std::string, CallbackInfo> const callbacks {
+    CALLBACK_REGISTER(warp, 2),
   };
 };
 
