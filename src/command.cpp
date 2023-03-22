@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <fstream>
 #include <stdexcept>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -80,4 +81,22 @@ void Command::CALLBACK_DEF(save) {
 
 void _save_file(std::string filename, std::vector<std::string> lines) {
   (std::ofstream {filename.c_str()} << join(lines, "\n")).close();
+}
+
+void Command::CALLBACK_DEF(load) {
+  (void) bar;
+
+  void _load_file(std::string filename, std::vector<std::string> &lines);
+
+  text.lines.clear();
+  _load_file(args.at(1), text.lines);
+}
+
+void _load_file(std::string filename, std::vector<std::string> &lines) {
+  std::ifstream file {filename.c_str()};
+  std::string line;
+
+  while (std::getline(file, line)) {
+    lines.push_back(line);
+  }
 }

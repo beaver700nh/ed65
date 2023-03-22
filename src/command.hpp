@@ -23,6 +23,7 @@ public:
 
   static void CALLBACK_DEF(warp);
   static void CALLBACK_DEF(save);
+  static void CALLBACK_DEF(load);
 
 private:
   using CallbackType = void (*)(Text &, Bar &, std::vector<std::string>);
@@ -31,6 +32,7 @@ private:
   static inline std::unordered_map<std::string, CallbackInfo> const callbacks {
     CALLBACK_REGISTER(warp, 2),
     CALLBACK_REGISTER(save, 0),
+    CALLBACK_REGISTER(load, 1),
   };
 };
 
