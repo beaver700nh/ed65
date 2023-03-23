@@ -1,0 +1,21 @@
+hello, world!
+
+; dfawefwapofkopk
+
+  afewkaopfk
+  .afewfwa
+  #
+  $
+  %
+  ,x
+  ,y
+  1230918908
+
+label:
+
+ALIAS = 3
+
+  " test "
+  '\xFF'
+  " ' " ; '
+  ' " ' ; "

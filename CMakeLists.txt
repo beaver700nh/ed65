@@ -19,6 +19,7 @@ add_executable(
   src/bar.cpp
   src/command.cpp
   src/text.cpp
+  src/highlight.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})

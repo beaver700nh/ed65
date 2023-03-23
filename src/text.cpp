@@ -163,6 +163,10 @@ void Text::backspace() {
   }
 }
 
+void Text::highlight() {
+  Highlighter::highlight(lines, highlights);
+}
+
 void Text::draw() {
   werase(win);
 
@@ -208,7 +212,7 @@ void Text::draw_highlights(unsigned int line_no, unsigned int row, unsigned int 
   }
 
   for (auto const &hl : line->second) {
-    mvwchgat(win, row, col + hl.start, hl.num, A_NORMAL, hl.color, nullptr);
+    mvwchgat(win, row, col + hl.start, hl.num, hl.attrs, hl.color, nullptr);
   }
 }
 

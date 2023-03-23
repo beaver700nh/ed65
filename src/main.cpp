@@ -58,6 +58,8 @@ int main() {
 
     text.tick(keystroke) &&
     bar.tick(keystroke);
+
+    text.highlight();
   }
 
   cleanup(0);
@@ -69,10 +71,14 @@ void startup(int *rows, int *cols) {
   noecho();
   keypad(stdscr, true);
 
-  start_color();
+  if (has_colors()) {
+    start_color();
 
-  init_pair(1, COLOR_RED, COLOR_BLUE);
-  init_pair(2, COLOR_MAGENTA, COLOR_CYAN);
+    // Assumes COLOR_XXX are implemented to be 0-7
+    for (unsigned int color = 1; color < 8; ++color) {
+      init_pair(color, color, COLOR_BLACK);
+    }
+  }
 
   getmaxyx(stdscr, *rows, *cols);
 }

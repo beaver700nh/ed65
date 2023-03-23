@@ -5,8 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <curses.h>
-
 #include "common.hpp"
 
 #include "bar.hpp"
@@ -29,7 +27,7 @@ void Command::run(std::string command, Text &text, Bar &bar) {
     return;
   }
 
-  unsigned int signature = callback->second.arguments;
+  unsigned int signature = callback->second.min_arguments;
 
   if (arguments.size() <= signature) {
     bar.status_set("Command '%s' requires >= %d arguments", name.c_str(), signature);
@@ -48,7 +46,7 @@ void Command::CALLBACK_DEF(warp) {
   (void) bar;
 
   int const row = std::stoi(args.at(1));
-  int const col = std::stoi(args.at(2));
+  int const col = (args.size() > 2 ? std::stoi(args.at(2)) : 0);
 
   int const cursor_y = constrain<int>(row, 0, text.lines.size() - 1);
   int const cursor_x = constrain<int>(col, 0, text.lines.at(cursor_y).size());
@@ -93,15 +91,23 @@ void Command::CALLBACK_DEF(load) {
 }
 
 void _load_file(std::string filename, std::vector<std::string> &lines) {
-  lines.clear();
-
   std::ifstream file {filename.c_str()};
+
+  if (!file) {
+    throw std::runtime_error("Failed to open file");
+  }
+
   std::string line;
+
+  lines.clear();
 
   while (std::getline(file, line)) {
     lines.push_back(line);
   }
 
+  file.close();
+
+  // Text editor cannot be empty
   if (lines.size() == 0) {
     lines.push_back("");
   }
