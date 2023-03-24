@@ -1,7 +1,6 @@
 #ifndef HIGHLIGHT_HPP
 #define HIGHLIGHT_HPP
 
-#include <regex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -57,16 +56,21 @@ public:
   Highlighter() = delete;
 
   static void highlight(std::vector<std::string> lines, Highlights &highlights);
-  static void highlight_line(std::string line, unsigned int line_no, Highlights &highlights);
+  static void highlight_line(std::string line, std::vector<Highlight> &highlight);
+};
 
-private:
-  struct TokenType {
-    unsigned int color;
-    unsigned int attrs;
-    std::regex regex;
-  };
+struct TokenType {
+  unsigned int color;
+  unsigned int attrs;
+};
 
-  static TokenType const token_types[];
+class TokenTypes {
+public:
+  static TokenType const
+    INDENT, COMMENT, ALIAS, LABEL,
+    DIRECTIVE, INSTRUCTION, REG_INDEX,
+    LIT_STR, LIT_CHAR, LIT_NUM,
+    IMMEDIATE, NUM_HEX, NUM_BIN;
 };
 
 #endif

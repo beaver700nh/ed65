@@ -1,4 +1,5 @@
 #include <csignal>
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 
@@ -9,10 +10,38 @@
 
 #include "main.hpp"
 
+#include "highlight.hpp"
+
 int main() {
   signal(SIGINT,  cleanup);
   signal(SIGHUP,  cleanup);
   signal(SIGTERM, cleanup);
+
+  // Highlights highlights;
+  // Highlighter::highlight(
+  //   {
+  //     "ALIAS = 3",
+  //     "label:instr",
+  //     "labeL: instr",
+  //     "label:",
+  //     "label: ",
+  //     "  instr",
+  //     "  instr op",
+  //     "  instr op,x",
+  //     "  instr #$5555",
+  //     "  .dir asdf"
+  //   },
+  //   highlights
+  // );
+
+  // for (auto const &[row, hls] : highlights) {
+  //   std::cout << row << ": ==============\n";
+  //   for (auto const &hl : hls) {
+  //     printf("{%d %d %d %d}\n", hl.start, hl.num, hl.color, hl.attrs);
+  //   }
+  // }
+
+  // return 0;
 
   int rows, cols;
   startup(&rows, &cols);
@@ -73,10 +102,11 @@ void startup(int *rows, int *cols) {
 
   if (has_colors()) {
     start_color();
+    use_default_colors();
 
     // Assumes COLOR_XXX are implemented to be 0-7
     for (unsigned int color = 1; color < 8; ++color) {
-      init_pair(color, color, COLOR_BLACK);
+      init_pair(color, color, -1);
     }
   }
 
