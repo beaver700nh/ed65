@@ -87,6 +87,7 @@ void Command::CALLBACK_DEF(load) {
   void _load_file(std::string filename, std::vector<std::string> &lines);
 
   _load_file(args.at(1), text.lines);
+  text.filename = args.at(1);
   text.cursor_x = text.cursor_y = text.offset_x = text.offset_y = 0;
 }
 

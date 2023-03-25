@@ -62,6 +62,7 @@ public:
 struct TokenType {
   unsigned int color;
   unsigned int attrs;
+  char const *const name;
 };
 
 class TokenTypes {

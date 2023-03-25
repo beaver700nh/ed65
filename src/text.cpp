@@ -76,15 +76,18 @@ void Text::bindings_cursor(int keystroke) {
     ++cursor_y;
   }
   if (keystroke == KEY_LEFT && cursor_x > 0) {
+    if (cursor_x > lines.at(cursor_y).size()) {
+      cursor_end();
+    }
+
     --cursor_x;
   }
   if (keystroke == KEY_RIGHT) {
-    if (cursor_x < lines.at(cursor_y).size()) {
-      ++cursor_x;
+    if (cursor_x >= lines.at(cursor_y).size()) {
+      cursor_end();
     }
     else {
-      // Right arrow snaps cursor to end if dangling off
-      cursor_end();
+      ++cursor_x;
     }
   }
 }
@@ -149,14 +152,13 @@ void Text::backspace() {
   }
 
   if (cursor_x == 0) {
-    if (cursor_y == 0) {
+    if (cursor_y-- == 0) {
       return; // can't delete past the beginning
     }
 
-    lines.at(cursor_y - 1).append(line);
-    lines.erase(lines.begin() + cursor_y--);
-
-    cursor_x = lines.at(cursor_y).size();
+    cursor_end();
+    lines.at(cursor_y).append(line);
+    lines.erase(lines.begin() + cursor_y + 1);
   }
   else {
     line.erase(--cursor_x, 1);
