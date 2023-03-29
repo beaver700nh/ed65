@@ -17,7 +17,7 @@ int main() {
   signal(SIGHUP,  cleanup);
   signal(SIGTERM, cleanup);
 
-#if 1
+#if 0
   Highlights highlights;
   Highlighter::highlight(
     {
