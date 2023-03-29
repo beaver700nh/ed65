@@ -17,42 +17,6 @@ int main() {
   signal(SIGHUP,  cleanup);
   signal(SIGTERM, cleanup);
 
-#if 0
-  Highlights highlights;
-  Highlighter::highlight(
-    {
-"; dfawefwapofkodsd",
-"  afewpaeee ; comment!",
-"  afewkaopfk",
-"  .afewfwa",
-"  lda #0",
-"  lda #$00",
-"  lda #%00000000",
-"  lda $0000,x",
-"  lda $0000,y",
-"",
-"label:",
-"",
-"ALIAS = 3",
-"",
-"  .asciiz \" test \"",
-"  .byte '\xFF'",
-"  .asciiz \" ' \" ; '",
-"  .byte '\"' ; \"",
-    },
-    highlights
-  );
-
-  for (auto const &[row, hls] : highlights) {
-    std::cout << row << ": ==============\n";
-    for (auto const &hl : hls) {
-      printf("{%d %d %d %d}\n", hl.start, hl.num, hl.color, hl.attrs);
-    }
-  }
-
-  return 0;
-#endif
-
   int rows, cols;
   startup(&rows, &cols);
 

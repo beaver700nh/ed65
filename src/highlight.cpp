@@ -35,9 +35,7 @@ void Highlighter::highlight(std::vector<std::string> lines, Highlights &highligh
   highlights.clear();
 
   for (unsigned int line_no = 0; line_no < lines.size(); ++line_no) {
-    // printf("Line #%d: '%s'\n", line_no, lines.at(line_no).c_str());
     highlight_line(lines.at(line_no), highlights[line_no]);
-    // printf("===\n");
   }
 }
 
@@ -64,9 +62,6 @@ void Highlighter::highlight_line(std::string line, std::vector<Highlight> &highl
   for (unsigned int index = 0; index < line.size(); ++index) {
     char ch = line.at(index);
     TokenType const *finished_type = nullptr;
-
-    // printf("ch #%d: '%c'\n", index, ch);
-    // printf("before: %d %d\n", start, end);
 
     if (ch == ';') {
       // Comment takes precedence over all
@@ -114,10 +109,6 @@ void Highlighter::highlight_line(std::string line, std::vector<Highlight> &highl
     else if (current_type == &TokenTypes::NUM_BIN) {
       finished_type = _highlight_NUM_BIN(&current_type, ch, index, &start, &end, &new_type);
     }
-
-    // printf("new_type: %d\n", new_type);
-    // printf("finished: %s, current: %s\n", (finished_type ? finished_type->name : "NULL"), (current_type ? current_type->name : "NULL"));
-    // printf("after: %d %d\n\n", start, end);
 
     if (finished_type) {
       highlight.emplace_back(start, end - start, finished_type->color, finished_type->attrs);
