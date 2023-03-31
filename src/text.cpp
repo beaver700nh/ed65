@@ -151,17 +151,14 @@ void Text::backspace() {
     cursor_end();
   }
 
-  if (cursor_x == 0) {
-    if (cursor_y-- == 0) {
-      return; // can't delete past the beginning
-    }
-
+  if (cursor_x != 0) {
+    line.erase(--cursor_x, 1);
+  }
+  else if (cursor_y != 0) {
+    --cursor_y;
     cursor_end();
     lines.at(cursor_y).append(line);
     lines.erase(lines.begin() + cursor_y + 1);
-  }
-  else {
-    line.erase(--cursor_x, 1);
   }
 }
 

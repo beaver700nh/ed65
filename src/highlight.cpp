@@ -25,7 +25,7 @@ TOKEN_TYPE(IMMEDIATE,   YELLOW,  A_NORMAL   );
 TOKEN_TYPE(NUM_HEX,     CYAN,    A_DIM      );
 TOKEN_TYPE(NUM_BIN,     CYAN,    A_DIM      );
 
-#define HIGHLIGHTER(name) TokenType const *_highlight_##name(TokenType const **current_type, char ch, unsigned int index, unsigned int *start, unsigned int *end, bool *new_type)
+#define HIGHLIGHTER(name) TokenType const *_highlight_##name(TokenType const **current_type, char ch, [[maybe_unused]] unsigned int index, [[maybe_unused]] unsigned int *start, [[maybe_unused]] unsigned int *end, bool *new_type)
 
 #define iswordch(ch) isalpha(ch) || ch == '_'
 #define isnumbin(ch) ch == '0' || ch == '1'
